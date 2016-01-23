@@ -17,10 +17,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	//test test
-	// test 2
-	//test 3
-	// test 4 from kyle
 	RobotDrive myRobot;
 	Joystick xbox;
 	int autoLoopCounter;
