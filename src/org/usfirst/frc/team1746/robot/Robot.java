@@ -28,7 +28,6 @@ public class Robot extends IterativeRobot {
 	Victor tapeMeasure;
 	DigitalInput beambreak;
 	DigitalOutput ballIndicator;
-	Victor test;
 
 	
 	
