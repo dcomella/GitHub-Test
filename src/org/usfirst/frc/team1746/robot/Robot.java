@@ -12,16 +12,7 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, 
- described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
- */
 public class Robot extends IterativeRobot {
-	//Auton auton;
 	RobotDrive myRobot;
 	Joystick xbox;
 	int autoLoopCounter;
@@ -37,13 +28,12 @@ public class Robot extends IterativeRobot {
 	AnalogInput defenseSelector;
 	AnalogInput slotSelector;
 	DigitalInput goalSelector;
+
+////////////////////////////////////////////////////////////////
+/////////////////         Robot Startup        /////////////////
+////////////////////////////////////////////////////////////////
 	
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
     public void robotInit() {
-    	//auton = new Auton();
     	
     	myRobot = new RobotDrive(0,1);
     	
@@ -68,23 +58,15 @@ public class Robot extends IterativeRobot {
     	server = CameraServer.getInstance();
         server.setQuality(50);
         server.startAutomaticCapture("cam0");
-        
-       
-    	
-    }
-    
-    
-    
-    
-    /**
-     * This function is called once each time the robot enters tele-operated mode
-     */
-    public void teleopInit(){
     }
 
-    /**
-     * This function is called periodically during operator control
-     */
+////////////////////////////////////////////////////////////////
+/////////////////          Teleop Mode         /////////////////
+////////////////////////////////////////////////////////////////
+    public void teleopInit(){
+    	
+    }
+
     public void teleopPeriodic() {
         myRobot.arcadeDrive(xbox);
         
@@ -132,20 +114,23 @@ public class Robot extends IterativeRobot {
        
     }
     
-   
-    /**
-     * This function is called periodically during test mode
-     */
+////////////////////////////////////////////////////////////////
+/////////////////           Test Mode          /////////////////
+////////////////////////////////////////////////////////////////
+    
     public void testPeriodic() {
     	LiveWindow.run();
     }
-    //////////////////////////////////////////////////////////////
-    //////////////         Auton Begins           ////////////////
-    //////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////
+////////////////           Auton Mode           ////////////////
+////////////////////////////////////////////////////////////////
     
     Defense selectedDefense;
     Slot selectedSlot;
     Goal selectedGoal;
+    
+    AutonStates autonState;
     
     public enum Defense {
 		NONE,
@@ -189,16 +174,14 @@ public class Robot extends IterativeRobot {
     	autonState = AutonStates.INIT;
     }
     
-    AutonStates autonState;
-    
     public void autonomousPeriodic() {
     	switch (autonState) {
     	case INIT:
-    		SmartDashboard.putString("Current State: ", "INIT");
+    		SmartDashboard.putString("Current State: ", autonState.toString());
     		autonState = AutonStates.APPROACH;
     		break;
     	case APPROACH:
-    		SmartDashboard.putString("Current State: ", "APPROACH");
+    		SmartDashboard.putString("Current State: ", autonState.toString());
     		SmartDashboard.putNumber("Left Drive Encoder: ", leftDrive.get());
     		if(leftDrive.get() > 100){
     			autonState = AutonStates.CALIBRATE;
@@ -206,11 +189,11 @@ public class Robot extends IterativeRobot {
     		}
         	break;
     	case CALIBRATE:
-    		SmartDashboard.putString("Current State: ", "CALIBRATE");
+    		SmartDashboard.putString("Current State: ", autonState.toString());
     		autonState = AutonStates.APPROACH_TOWER;
         	break;
     	case APPROACH_TOWER:
-    		SmartDashboard.putString("Current State: ", "APPROACH_TOWER");
+    		SmartDashboard.putString("Current State: ", autonState.toString());
     		SmartDashboard.putNumber("Left Drive Encoder: ", leftDrive.get());
     		if(leftDrive.get() > 200){
     			autonState = AutonStates.SHOOT;
@@ -218,11 +201,11 @@ public class Robot extends IterativeRobot {
     		}
         	break;
     	case SHOOT:
-    		SmartDashboard.putString("Current State: ", "SHOOT");
+    		SmartDashboard.putString("Current State: ", autonState.toString());
     		autonState = AutonStates.RETREAT;
         	break;
     	case RETREAT:
-    		SmartDashboard.putString("Current State: ", "RETREAT");
+    		SmartDashboard.putString("Current State: ", autonState.toString());
     		SmartDashboard.putNumber("Left Drive Encoder: ", leftDrive.get());
     		if(leftDrive.get() > 300){
     			autonState = AutonStates.UNBREACH;
@@ -230,10 +213,10 @@ public class Robot extends IterativeRobot {
     		}
         	break;
     	case UNBREACH:
-    		SmartDashboard.putString("Current State: ", "UNBREACH");
+    		SmartDashboard.putString("Current State: ", autonState.toString());
         	break;
     	case REALIGN:
-    		SmartDashboard.putString("Current State: ", "REALIGN");
+    		SmartDashboard.putString("Current State: ", autonState.toString());
         	break;
     	}
     }
@@ -242,78 +225,78 @@ public class Robot extends IterativeRobot {
 	public void setDefenseSelector(){
 		if(defenseSelector.getValue() >= 0 && defenseSelector.getValue() < 365){
 			selectedDefense = Defense.NONE;
-			SmartDashboard.putString("Selected Defense: ", "NONE");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 		if(defenseSelector.getValue() >= 365 && defenseSelector.getValue() < 728){
 			selectedDefense = Defense.APPROACH_ONLY;
-			SmartDashboard.putString("Selected Defense: ", "APPROACH_ONLY");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 		if(defenseSelector.getValue() >= 728 && defenseSelector.getValue() < 1091){
 			selectedDefense = Defense.LOWBAR;
-			SmartDashboard.putString("Selected Defense: ", "LOWBAR");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 		if(defenseSelector.getValue() >= 1091 && defenseSelector.getValue() < 1454){
 			selectedDefense = Defense.A_PORTCULLIS;
-			SmartDashboard.putString("Selected Defense: ", "A_PORTCULLIS");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 		if(defenseSelector.getValue() >= 1454 && defenseSelector.getValue() < 1817){
 			selectedDefense = Defense.A_CHEVAL_DE_FRISE;
-			SmartDashboard.putString("Selected Defense: ", "A_CHEVAL_DE_FRISE");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 		if(defenseSelector.getValue() >= 1817 && defenseSelector.getValue() < 2181){
 			selectedDefense = Defense.B_RAMPARTS;
-			SmartDashboard.putString("Selected Defense: ", "B_RAMPARTS");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 		if(defenseSelector.getValue() >= 2181 && defenseSelector.getValue() < 2545){
 			selectedDefense = Defense.B_MOAT;
-			SmartDashboard.putString("Selected Defense: ", "B_MOAT");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 		if(defenseSelector.getValue() >= 2545 && defenseSelector.getValue() < 2909){
 			selectedDefense = Defense.C_DRAWBRIDGE;
-			SmartDashboard.putString("Selected Defense: ", "C_DRAWBRIDGE");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 		if(defenseSelector.getValue() >= 2909 && defenseSelector.getValue() < 3273){
 			selectedDefense = Defense.C_SALLY_PORT;
-			SmartDashboard.putString("Selected Defense: ", "C_SALLY_PORT");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 		if(defenseSelector.getValue() >= 3273 && defenseSelector.getValue() < 3635){
 			selectedDefense = Defense.D_ROCK_WALL;
-			SmartDashboard.putString("Selected Defense: ", "D_ROCK_WALL");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 		if(defenseSelector.getValue() >= 3635 && defenseSelector.getValue() < 3999){
 			selectedDefense = Defense.D_ROUGH_TERRAIN;
-			SmartDashboard.putString("Selected Defense: ", "D_ROUGH_TERRAIN");
+			SmartDashboard.putString("Selected Defense: ", selectedDefense.toString());
 		}
 	}
 	public void setSlotSelector(){
 		if(slotSelector.getValue() >= 0 && slotSelector.getValue() < 799){
 			selectedSlot = Slot.SLOT_1;
-			SmartDashboard.putString("Selected Slot: ", "SLOT_1");
+			SmartDashboard.putString("Selected Slot: ", selectedSlot.toString());
 		}
 		if(slotSelector.getValue() >= 799 && slotSelector.getValue() < 1598){
 			selectedSlot = Slot.SLOT_2;
-			SmartDashboard.putString("Selected Slot: ", "SLOT_2");
+			SmartDashboard.putString("Selected Slot: ", selectedSlot.toString());
 		}
 		if(slotSelector.getValue() >= 1598 && slotSelector.getValue() < 2397){
 			selectedSlot = Slot.SLOT_3;
-			SmartDashboard.putString("Selected Slot: ", "SLOT_3");
+			SmartDashboard.putString("Selected Slot: ", selectedSlot.toString());
 		}
 		if(slotSelector.getValue() >= 2397 && slotSelector.getValue() < 3197){
 			selectedSlot = Slot.SLOT_4;
-			SmartDashboard.putString("Selected Slot: ", "SLOT_4");
+			SmartDashboard.putString("Selected Slot: ", selectedSlot.toString());
 		}
 		if(slotSelector.getValue() >= 3197 && slotSelector.getValue() < 3999){
 			selectedSlot = Slot.SLOT_5;
-			SmartDashboard.putString("Selected Slot: ", "SLOT_5");
+			SmartDashboard.putString("Selected Slot: ", selectedSlot.toString());
 		}
 	}
 	public void setGoalSelector(){
 		if(goalSelector.get() == true){
 			selectedGoal = Goal.LOW_LEFT;
-			SmartDashboard.putString("Selected Goal: ", "Left");
+			SmartDashboard.putString("Selected Goal: ", selectedGoal.toString());
 		} else{
 			selectedGoal = Goal.LOW_RIGHT;
-			SmartDashboard.putString("Selected Goal: ", "Right");
+			SmartDashboard.putString("Selected Goal: ", selectedGoal.toString());
 		}
 	}
 	public void autonSmartDashboardUpdate(){
@@ -324,14 +307,17 @@ public class Robot extends IterativeRobot {
 	    
 	}
     
-//////////////////////////////////////////////////////////////
-//////////////            Disable             ////////////////
-//////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+/////////////////         Disabled Mode        /////////////////
+////////////////////////////////////////////////////////////////
+	
 	public void disabledPeriodic(){
 		setDefenseSelector();
     	setGoalSelector();
     	setSlotSelector();
     }
+	
+
 }
 
 
